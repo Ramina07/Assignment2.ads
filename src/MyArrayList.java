@@ -20,7 +20,7 @@ public class MyArrayList<T> implements MyList<T> {
         return (T) data[index];
     }
 
-    // Removes element at index
+    // Remove element at index
     public void remove(int index) {
         checkIndex(index);
         System.arraycopy(data, index + 1, data, index, size - index - 1);
