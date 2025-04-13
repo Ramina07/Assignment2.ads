@@ -1,104 +1,90 @@
-// Custom implementation of a dynamic array list
-public class MyArrayList<T> implements MyList<T> {
-    private Object[] data;
-    private int size;
-    private static final int INITIAL_CAPACITY = 10;
+// Custom implementation of a doubly linked list
+public class MyLinkedList<T> implements MyList<T> {
 
-    public MyArrayList() {
-        data = new Object[INITIAL_CAPACITY];
-        size = 0;
-    }
+    // Inner node class
+    private class Node {
+        T data;
+        Node next;
+        Node prev;
 
-    // Doubles the array size if needed
-    private void ensureCapacity() {
-        if (size >= data.length) {
-            Object[] newData = new Object[data.length * 2];
-            System.arraycopy(data, 0, newData, 0, size);
-            data = newData;
+        Node(T data) {
+            this.data = data;
         }
     }
 
+    private Node head;
+    private Node tail;
+    private int size;
+
+    public MyLinkedList() {
+        head = null;
+        tail = null;
+        size = 0;
+    }
+
+    // Adds to the end
     @Override
     public void add(T item) {
-        ensureCapacity();
-        data[size++] = item;
+        Node newNode = new Node(item);
+        if (tail == null) {
+            head = tail = newNode;
+        } else {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
+        }
+        size++;
     }
 
+    // Returns item at given index
     @Override
     public T get(int index) {
-        checkIndex(index);
-        return (T) data[index];
+        return getNode(index).data;
     }
 
+    // Removes item at index
     @Override
     public void remove(int index) {
-        checkIndex(index);
-        System.arraycopy(data, index + 1, data, index, size - index - 1);
-        data[--size] = null;
+        Node node = getNode(index);
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        } else {
+            head = node.next;
+        }
+
+        if (node.next != null) {
+            node.next.prev = node.prev;
+        } else {
+            tail = node.prev;
+        }
+
+        size--;
     }
 
+    // Returns current size
     @Override
     public int size() {
         return size;
     }
 
-    // ========= commit 3 =========
-
-    @Override
-    public void sort() {
-        for (int i = 0; i < size - 1; i++) {
-            for (int j = 0; j < size - i - 1; j++) {
-                T a = (T) data[j];
-                T b = (T) data[j + 1];
-                if (((Comparable<T>) a).compareTo(b) > 0) {
-                    data[j] = b;
-                    data[j + 1] = a;
-                }
-            }
+    // Helper to access node by index
+    private Node getNode(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
         }
-    }
 
-    @Override
-    public int indexOf(Object object) {
-        for (int i = 0; i < size; i++) {
-            if (data[i].equals(object)) {
-                return i;
-            }
+        Node current;
+        if (index < size / 2) {
+            current = head;
+            for (int i = 0; i < index; i++) current = current.next;
+        } else {
+            current = tail;
+            for (int i = size - 1; i > index; i--) current = current.prev;
         }
-        return -1;
+        return current;
     }
 
-    @Override
-    public int lastIndexOf(Object object) {
-        for (int i = size - 1; i >= 0; i--) {
-            if (data[i].equals(object)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    public boolean exists(Object object) {
-        return indexOf(object) != -1;
-    }
-
-    @Override
-    public Object[] toArray() {
-        Object[] result = new Object[size];
-        System.arraycopy(data, 0, result, 0, size);
-        return result;
-    }
-
-    @Override
-    public void clear() {
-        for (int i = 0; i < size; i++) {
-            data[i] = null;
-        }
-        size = 0;
-    }
-
-
+    // ========== NOT IMPLEMENTED YET ==========
 
     @Override
     public void set(int index, T item) {
@@ -141,26 +127,37 @@ public class MyArrayList<T> implements MyList<T> {
     }
 
     @Override
-    public java.util.Iterator<T> iterator() {
-        return new java.util.Iterator<T>() {
-            private int current = 0;
-
-            @Override
-            public boolean hasNext() {
-                return current < size;
-            }
-
-            @Override
-            public T next() {
-                return (T) data[current++];
-            }
-        };
+    public void sort() {
+        // to be implemented later
     }
 
-    // Check that index is within current list bounds
-    private void checkIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Invalid index: " + index);
-        }
+    @Override
+    public int indexOf(Object object) {
+        return -1; // to be implemented later
+    }
+
+    @Override
+    public int lastIndexOf(Object object) {
+        return -1; // to be implemented later
+    }
+
+    @Override
+    public boolean exists(Object object) {
+        return false; // to be implemented later
+    }
+
+    @Override
+    public Object[] toArray() {
+        return null; // to be implemented later
+    }
+
+    @Override
+    public void clear() {
+        // to be implemented later
+    }
+
+    @Override
+    public java.util.Iterator<T> iterator() {
+        return null; // to be implemented later
     }
 }
